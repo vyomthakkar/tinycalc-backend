@@ -1,17 +1,24 @@
 defmodule Tinycalc.MixProject do
   use Mix.Project
 
-  def project do
-    [
-      app: :tinycalc,
-      version: "0.1.0",
-      elixir: "~> 1.14",
-      elixirc_paths: elixirc_paths(Mix.env()),
-      start_permanent: Mix.env() == :prod,
-      aliases: aliases(),
-      deps: deps()
+def project do
+  [
+    app: :tinycalc,
+    version: "0.1.0",
+    elixir: "~> 1.14",
+    elixirc_paths: elixirc_paths(Mix.env()),
+    start_permanent: Mix.env() == :prod,
+    aliases: aliases(),
+    deps: deps(),
+    releases: [
+      tinycalc: [
+        include_executables_for: [:unix],
+        applications: [runtime_tools: :permanent],
+        steps: [:assemble, :tar]
+      ]
     ]
-  end
+  ]
+end
 
   # Configuration for the OTP application.
   #
