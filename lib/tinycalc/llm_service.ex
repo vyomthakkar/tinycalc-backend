@@ -50,7 +50,11 @@ defmodule Tinycalc.LLMService do
         {:ok, %HTTPoison.Response{status_code: 200, body: response_body}} ->
           parsed_response = Jason.decode!(response_body)
           
-          content = get_in(parsed_response, ["choices", 0, "message", "content"])
+          # Safely extract content using pattern matching instead of get_in with list index
+          content = case parsed_response do
+            %{"choices" => [%{"message" => %{"content" => content}} | _]} -> content
+            _ -> nil
+          end
           
           if is_binary(content) do
             {:ok, String.trim(content)}
