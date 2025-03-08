@@ -27,14 +27,47 @@ defmodule Tinycalc.LLMService do
         {"Authorization", "Bearer #{api_key}"}
       ]
       
-      prompt = """
-      Generate a simple shader program in GLSL based on the following description:
-      
-      #{text_input}
-      
-      Provide ONLY the shader code without any explanations or markdown formatting.
-      The response should be ready for direct use in a WebGL or other GLSL environment.
-      """
+prompt = """
+Generate a GLSL shader based on this description: "#{text_input}"
+
+IMPORTANT CONSTRAINTS:
+1. DO NOT use any matrix uniforms or 3D transformations
+2. Use ONLY these uniforms: u_time, u_resolution, and u_mouse
+3. Keep the vertex shader simple with gl_Position = a_position;
+4. Create all visual effects in the fragment shader only
+5. NO markdown formatting or code blocks
+
+Your response must follow this exact structure:
+
+// Vertex Shader
+#version 300 es
+precision mediump float;
+
+in vec4 a_position;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+void main() {
+  gl_Position = a_position;  // DO NOT CHANGE THIS LINE
+}
+
+// Fragment Shader
+#version 300 es
+precision mediump float;
+
+out vec4 outColor;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+void main() {
+  vec2 st = gl_FragCoord.xy / u_resolution;
+  vec3 color = vec3(0.0);
+  
+  // Implement the effect: "#{text_input}" here
+  
+  outColor = vec4(color, 1.0);
+}
+"""
       
       body = Jason.encode!(%{
         "model" => "gpt-4o",
@@ -43,10 +76,11 @@ defmodule Tinycalc.LLMService do
           %{"role" => "user", "content" => prompt}
         ],
         "max_tokens" => 2000,
-        "temperature" => 0.7
+        "temperature" => 0.2
       })
       
-      case HTTPoison.post(url, body, headers) do
+      # open ai api timeout is set to 2 minutes (120000 ms)
+      case HTTPoison.post(url, body, headers, [timeout: 120000, recv_timeout: 120000]) do
         {:ok, %HTTPoison.Response{status_code: 200, body: response_body}} ->
           parsed_response = Jason.decode!(response_body)
           
