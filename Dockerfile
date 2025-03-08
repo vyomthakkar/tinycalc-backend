@@ -53,4 +53,4 @@ COPY --from=build /app/_build/prod/rel/tinycalc ./
 ENV PORT=8080
 ENV PHX_HOST=tinycalc-backend.fly.dev
 
-CMD ["/app/bin/server"]
+CMD ["/app/bin/tinycalc", "start"]
