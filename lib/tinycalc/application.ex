@@ -9,7 +9,7 @@ defmodule Tinycalc.Application do
   def start(_type, _args) do
     children = [
       TinycalcWeb.Telemetry,
-      Tinycalc.Repo,
+      # Tinycalc.Repo,
       {DNSCluster, query: Application.get_env(:tinycalc, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Tinycalc.PubSub},
       # Start a worker by calling: Tinycalc.Worker.start_link(arg)
