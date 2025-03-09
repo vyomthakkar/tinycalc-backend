@@ -11,6 +11,16 @@ defmodule TinycalcWeb.HealthController do
           name: "Shader Generation API",
           path: "/api/shader/generate",
           method: "POST"
+        },
+        %{
+          name: "Shader Correction API",
+          path: "/api/shader/correct",
+          method: "POST",
+          parameters: [
+            "shader_code: Original shader code with error",
+            "error_message: Compiler error message",
+            "original_query: Original description used to generate the shader"
+          ]
         }
       ]
     })

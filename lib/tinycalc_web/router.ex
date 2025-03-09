@@ -9,15 +9,16 @@ defmodule TinycalcWeb.Router do
 
   scope "/api", TinycalcWeb do
     pipe_through :api
-    
+
     post "/shader/generate", ShaderController, :generate
+    post "/shader/correct", ShaderController, :correct
     get "/health", HealthController, :check
   end
-  
+
   # Root path health check
   scope "/", TinycalcWeb do
     pipe_through :api
-    
+
     get "/", HealthController, :check
   end
 end
